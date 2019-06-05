@@ -1,8 +1,10 @@
-import { Application } from "probot"; // eslint-disable-line no-unused-vars
-
-export = (app: Application) => {
-  app.on("issues.opened", async context => {
-    const issueNumber = context.payload.issue.number;
+/**
+ * This is the main entrypoint to your Probot app
+ * @param {import('probot').Application} app
+ */
+module.exports = app => {
+  app.on("pull_request.opened", async context => {
+    const issueNumber = context.payload.pull_request.number;
     const bucket = "jobber-atlantis";
 
     const issueComment = context.issue({
@@ -12,8 +14,9 @@ Hi Frend. I'm preparing a preview of the docs for this branch. It will be up mom
 [![Preview](https://img.shields.io/badge/&#8599;-Preview-28a745.svg)](http://${bucket}.s3-website-us-east-1.amazonaws.com/${issueNumber})`
     });
 
-    await context.github.issues.createComment(issueComment);
+    return context.github.issues.createComment(issueComment);
   });
+
   // For more information on building apps:
   // https://probot.github.io/docs/
 
